@@ -1,0 +1,8 @@
+dist/
+nbproject/
+build/
+test/
+*.log
+*.mf
+*.sql
+*.xml
