@@ -1,0 +1,297 @@
+public void ImprimerEau() {
+        /*Variables de */
+        
+        Eau e = getEauToMasterTable();
+        if(e==null)
+        {
+          JOptionPane.showMessageDialog(null, "VEUILLEZ SELECTIONNER UNE EAU ");
+          return;
+        }
+        
+         
+       /**
+        *Remplir les infos du report
+        * 
+        * 
+        */
+       
+       
+       
+        String path = "C://Impression_ITEXT//"+e.getNumEngLabo()+"_Analyse.pdf";
+         Document doc= new Document(PageSize.A4);
+         try{
+        PdfWriter w = PdfWriter.getInstance(doc, new FileOutputStream(path));
+     /*   PdfReader r = new PdfReader(path);
+        PdfStamper stp = new PdfStamper(r, new FileOutputStream(path));*/
+ 
+        PdfContentByte cb = new PdfContentByte(w) ;
+ 
+       System.out.println("Dimension du document \n Longueur L= "+doc.getPageSize().getHeight()+" Largeur l = "+doc.getPageSize().getWidth());
+         doc.open();
+         cb =w.getDirectContent();
+         enteteItext(e, doc, cb);                        
+            Phrase ligne = new Phrase(new Chunk(new LineSeparator(1f, 75, BaseColor.BLACK, Element.ALIGN_CENTER, 0.5f)));           
+              ColumnText.showTextAligned(cb, Element.ALIGN_CENTER, ligne, 50f, 660f, 0);
+         
+            
+            Phrase nomDemandeur = new Phrase("Demandeur : ", new Font(Font.FontFamily.TIMES_ROMAN, 10,	Font.BOLD, BaseColor.BLACK));
+                nomDemandeur.add(e.getClient().getNomDemandeur());
+                 ColumnText.showTextAligned(cb, Element.ALIGN_LEFT, nomDemandeur, 50f, 650f, 0);
+         
+        Phrase Bp = new Phrase("Bp :", new Font(Font.FontFamily.TIMES_ROMAN, 10,	Font.BOLD, BaseColor.BLACK)); 
+                 Bp.add(e.getClient().getBp()+"      ");
+                 Bp.add(e.getClient().getVille()+"                                      ");
+                 
+                 ColumnText.showTextAligned(cb, Element.ALIGN_LEFT, Bp, 80f, 640f, 0);
+         Phrase tel = new Phrase("                Tel : ", new Font(Font.FontFamily.TIMES_ROMAN, 10,	Font.BOLD, BaseColor.BLACK));
+                tel.add(" "+e.getClient().getTelDemandeur()) ;
+                 ColumnText.showTextAligned(cb, Element.ALIGN_LEFT, tel, 150f, 640f, 0);
+                 
+                  Phrase fax = new Phrase("                        Fax : ", new Font(Font.FontFamily.TIMES_ROMAN, 10,	Font.BOLD, BaseColor.BLACK));
+                fax.add(" "+e.getClient().getFaxDemandeur()) ;
+                 ColumnText.showTextAligned(cb, Element.ALIGN_LEFT, fax, 250f, 640f, 0);
+                   
+         Phrase mail = new Phrase("mail : ", new Font(Font.FontFamily.TIMES_ROMAN, 10,	Font.BOLD, BaseColor.BLACK));
+                fax.add(" "+e.getClient().getEmailDemandeur()) ;
+                 ColumnText.showTextAligned(cb, Element.ALIGN_LEFT, mail, 80f, 630f, 0);
+                 
+         Phrase prelev = new Phrase("Prelevement :                  ", new Font(Font.FontFamily.TIMES_ROMAN, 10,	Font.BOLD, BaseColor.BLACK))         ;
+                  prelev.add(new Phrase("Effectué le :                     "+DateFormat.getDateInstance(DateFormat.MEDIUM, Locale.FRANCE).format(e.getDatePrelevement())+"               à  "+e.getLieuPrelevement(), new Font(Font.FontFamily.TIMES_ROMAN))) ; 
+                  ColumnText.showTextAligned(cb, Element.ALIGN_LEFT, prelev, 80f, 620f, 0);
+    
+       Phrase recep = new Phrase("Reçu au laboratoire le :                            ", new Font(Font.FontFamily.TIMES_ROMAN, 10,	Font.BOLD, BaseColor.BLACK))         ;
+                  recep.add(new Phrase("               "+DateFormat.getDateInstance(DateFormat.MEDIUM, Locale.FRANCE).format(e.getDateReceptionLabo())+"             Num Enregistrement Labo :"+e.getNumEngLabo(), new Font(Font.FontFamily.TIMES_ROMAN))) ; 
+                  ColumnText.showTextAligned(cb, Element.ALIGN_LEFT, recep, 80f, 610f, 0);
+              
+       Phrase etiquetage = new Phrase("Etiquetage du demandeur  :  "+e.getEtiquetageDemandeur() , new Font(Font.FontFamily.TIMES_ROMAN, 10,Font.BOLD, BaseColor.BLACK)) ;
+                 ColumnText.showTextAligned(cb, Element.ALIGN_LEFT, etiquetage, 80f, 600f, 0);
+              
+       Phrase numGlims = new Phrase("Num GLIMS      :  ", new Font(Font.FontFamily.TIMES_ROMAN, 10,	Font.BOLD, BaseColor.BLACK)) ;           
+            ColumnText.showTextAligned(cb, Element.ALIGN_LEFT, numGlims, 50f, 590f, 0);
+               
+       Phrase paiement = new Phrase("Paiement : "+e.getTypeDePayement()+"           Date d'effet:                          "+DateFormat.getDateInstance(DateFormat.MEDIUM, Locale.FRANCE).format(e.getDateEffetPaiement())+"           Num Commande : "+e.getNumPaiement(),new Font(Font.FontFamily.TIMES_ROMAN, 10,	Font.BOLD, BaseColor.BLACK) ) ;
+              ColumnText.showTextAligned(cb, Element.ALIGN_LEFT, paiement, 50f, 580f, 0);
+              
+             
+              //METTRE UNE LIGNE 
+               ColumnText.showTextAligned(cb, Element.ALIGN_CENTER, ligne, 50f, 570f, 0);
+         
+              
+       Phrase paraResUniCrit = new Phrase();//"Parametre                                        Resultat                                     Unite                                        Norme ",new Font(Font.FontFamily.TIMES_ROMAN, 11,	Font.BOLD, BaseColor.BLACK) ); 
+              
+          paraResUniCrit.add(new Chunk(tab1));
+          paraResUniCrit.add("Parametre");
+          
+          paraResUniCrit.add(new Chunk(tab2));
+          paraResUniCrit.add("Resultat");
+          
+          paraResUniCrit.add(new Chunk(tab3));
+          paraResUniCrit.add("Unite");
+          
+          paraResUniCrit.add(new Chunk(tab4));
+          paraResUniCrit.add("Norme");
+          
+          ColumnText.showTextAligned(cb, Element.ALIGN_LEFT, paraResUniCrit, 50f, 560f, 0);
+          
+          
+          
+          
+              //AFFICHAGE DES ANALYSES
+            List<Analyse> list = metier.getAllAnalysesEau(e.getId().longValue());
+       
+       if(list==null)
+         {
+              JOptionPane.showMessageDialog(null, "IL  N\' Y\'A PAS D\'ANALYSES DE PARAMETRES A IMPRIMER ");
+               return;
+       
+         }
+       /*PdfReader r = new PdfReader(path);
+        
+         PdfStamper stamper = new PdfStamper(r, new FileOutputStream(path));
+          stamper.insertPage(2,r.getPageSize(1) );*/
+       /*doc.newPage();
+       enteteItext(e, doc, cb);
+       //doc.add(paiement); 
+       ColumnText.showTextAligned(cb, Element.ALIGN_LEFT, paraResUniCrit, 50f, 560f, 0);
+          */
+       
+       for(Analyse a:list)
+        {
+          System.out.println("Analyse id ="+a.getId()+" nomParam"+a.getAnalyseNomParam()+" classe Parametre"+a.getAnalyseClasseParam()+" r ="+a.getAnalyseResult());
+        }
+       
+       // derniere hauteur 560;
+       int k =list.size();
+       
+       int l =1;
+       int i = 0;
+       int j =1;
+       int page =1;
+       float lastPosFich =550f;
+        // creates tabs
+       Phrase clp = new Phrase();
+        String  classParam = "";//list.get(i).getAnalyseClasseParam();
+        //Ecrire la première classe
+        /*clp.add(classParam);
+        ColumnText.showTextAligned(cb, Element.ALIGN_LEFT, clp, 50f,lastPosFich-10f , 0);
+          */    
+       do
+       {  
+          if(page==1)
+           {
+             if((lastPosFich-10f*l)>70f)
+              {   System.out.println(" Entrez dans la 1ere page i"+i);
+                  if(!classParam.equals(list.get(i).getAnalyseClasseParam()))    //Ecrire la nouvelle classe
+                      {
+                      Phrase clp2 = new Phrase();
+                      clp2.add(new Chunk(tab1));
+                      Chunk cl = new Chunk(list.get(i).getAnalyseClasseParam());
+                        cl.setUnderline(0.1f,-2f );
+                      clp2.add(cl);
+                      lastPosFich-=15f;
+                       ColumnText.showTextAligned(cb, Element.ALIGN_LEFT, clp2, 50f, lastPosFich, 0);
+                       }
+                   lastPosFich=lastPosFich-15f;
+                   classParam = list.get(i).getAnalyseClasseParam();
+                 rempli_ligne(list.get(i),lastPosFich,cb);
+                
+                 l++;
+              }
+             else//créé une new page dans le document
+             {
+                new_Footer(doc,page,cb);
+                page++;
+                j=1;
+                doc.newPage();
+                enteteItext(e, doc, cb);
+             }
+           }
+          else
+          {}
+            i++;
+            
+        }while(i<k);
+              
+          doc.close();
+       
+         }
+         catch(Exception ex)
+         {
+            ex.printStackTrace();
+         }
+    JOptionPane.showMessageDialog(null, "FIN IMPRESSION");
+    }
+	
+	
+    private void rempli_ligne( Analyse a, float lastPosFich,PdfContentByte cb) {
+        //throw new UnsupportedOperationException("Not yet implemented");
+        
+        Phrase p = new Phrase();
+        
+      // Phrase p  = new Phrase();
+                // insert a tab
+                p.add(new Chunk(tab1));
+                // add the origina title
+                if (a.getAnalyseResult() != null && a.getAnalyseResult() !="")
+                {
+                 // insert a tab
+                p.add(new Chunk(tab1));
+                 //ajoute le nom   
+                p.add(new Chunk(a.getAnalyseNomParam()));
+                // insert a tab
+                p.add(new Chunk(tab2));
+                // ajoute 
+                p.add(new Chunk(a.getAnalyseResult()));
+                // insert a tab
+                p.add(new Chunk(tab3));
+                // add the production year of the movie
+                p.add(new Chunk(a.getAnalyseUniteParam()));
+                // insert a tab
+                p.add(new Chunk(tab4));
+                // add the production year of the movie
+                p.add(new Chunk(a.getAnalyseCritereParam()));
+                //add the paragraph to the document
+              //  doc.add(p);
+                p.add(Chunk.NEWLINE);
+                ColumnText.showTextAligned(cb, Element.ALIGN_LEFT, p, 50f, lastPosFich, 0);
+               // lastPosFich-=2f;
+                       
+                }
+            
+        
+    }
+	
+	
+    public void enteteItext(Eau e , Document doc, PdfContentByte cb)throws Exception
+    {
+       Image image = Image.getInstance("C://Impression_ITEXT//minste.jpg");
+		image.setAbsolutePosition(259f,775f);
+                image.scaleAbsolute(41,46);
+                image.setAlignment(Image.TEXTWRAP);
+          Image img = Image.getInstance("C://Impression_ITEXT//cpcBB.jpg")      ;
+                img.setAbsolutePosition(22f,700f);
+                img.scaleAbsolute(69f,73f);
+               // img.setAlignment(Image.TEXTWRAP);
+         
+         Phrase phrase = new Phrase(new StringTokenizer("MINSANTE", " ").nextToken(), new Font(Font.FontFamily.TIMES_ROMAN, 8,	Font.NORMAL, BaseColor.BLACK));
+           ColumnText.showTextAligned(cb, Element.ALIGN_LEFT, phrase, 259f, 770f, 0);
+        
+         Phrase labRef = new Phrase("Laboratoire national de référence et de santé publique",new Font(Font.FontFamily.TIMES_ROMAN, 7,	Font.NORMAL, BaseColor.BLACK));
+           ColumnText.showTextAligned(cb, Element.ALIGN_LEFT, labRef, 1f, 694f, 0);
+          
+          Phrase RepCamer = new Phrase("REPUBLIQUE DU CAMEROUN ", new Font(Font.FontFamily.TIMES_ROMAN, 10,	Font.NORMAL, BaseColor.BLACK));
+             ColumnText.showTextAligned(cb, Element.ALIGN_LEFT, RepCamer, 5f, 805f, 0);
+          
+          Phrase PaixTravailPatrie = new Phrase("PAIX-TRAVAIL-PATRIE ", new Font(Font.FontFamily.TIMES_ROMAN, 10,	Font.NORMAL, BaseColor.BLACK));
+             ColumnText.showTextAligned(cb, Element.ALIGN_LEFT, PaixTravailPatrie, 19f, 795f, 0);
+          
+          
+          Phrase RepCameroon = new Phrase("REPUBLIC OF CAMEROON ", new Font(Font.FontFamily.TIMES_ROMAN, 10,	Font.NORMAL, BaseColor.BLACK));
+             ColumnText.showTextAligned(cb, Element.ALIGN_LEFT, RepCameroon, 415f, 805f, 0);
+          
+          Phrase PeaceWorkFatherland = new Phrase("PEACE-WORK-FATHERLAND ", new Font(Font.FontFamily.TIMES_ROMAN, 10,	Font.NORMAL, BaseColor.BLACK));
+             ColumnText.showTextAligned(cb, Element.ALIGN_LEFT,PeaceWorkFatherland , 409f, 795f, 0);
+          
+             
+             
+          Phrase exelBio = new Phrase("L'excellence en Biologie accessible à tous",new Font(Font.FontFamily.TIMES_ROMAN, 7,	Font.NORMAL, BaseColor.BLACK));
+            ColumnText.showTextAligned(cb, Element.ALIGN_LEFT, exelBio, 1f, 689f, 0);
+            
+         Phrase   cpc =new Phrase("CENTRE PASTEUR DU CAMEROUN",new Font(Font.FontFamily.TIMES_ROMAN, 9,	Font.BOLD, BaseColor.BLACK));
+            ColumnText.showTextAligned(cb, Element.ALIGN_LEFT, cpc, 121f, 735f, 0);
+         
+         Phrase Bpcpc = new Phrase("B.P : 1274 - Yaoundé - Cameroun Tel : (237)22 23 18 03 ",new Font(Font.FontFamily.TIMES_ROMAN, 8,	Font.NORMAL, BaseColor.BLACK));
+              ColumnText.showTextAligned(cb, Element.ALIGN_LEFT, Bpcpc, 280f, 735f, 0);
+         
+         Phrase faxDema = new Phrase("Fax : (237)22 23 15 64 Couriel : cpc@pasteur-yaounde.org. Site Web : ",new Font(Font.FontFamily.TIMES_ROMAN, 8,	Font.NORMAL, BaseColor.BLACK) );
+           // faxDema.add();
+         Anchor anchor = new Anchor("http://www.pasteur-yaounde.org");
+                anchor.setReference("http://www.pasteur-yaounde.org");
+                anchor.setFont(new Font(Font.FontFamily.TIMES_ROMAN, 4, Font.NORMAL, BaseColor.WHITE));
+            faxDema.add(anchor);    
+               ColumnText.showTextAligned(cb, Element.ALIGN_LEFT, faxDema, 121f, 725f, 0);
+           
+         Phrase servLhe = new Phrase("Service d'Hygiène Environnement section physico-chimie",new Font(Font.FontFamily.TIMES_ROMAN, 10,	Font.BOLD, BaseColor.BLACK));
+                 ColumnText.showTextAligned(cb, Element.ALIGN_LEFT, servLhe, 151f, 705f, 0);
+         
+         Phrase Bulletin = new Phrase("Bulletin d'Analyse Physicochimique",new Font(Font.FontFamily.TIMES_ROMAN, 10,	Font.BOLD, BaseColor.BLACK));
+                 ColumnText.showTextAligned(cb, Element.ALIGN_LEFT, Bulletin, 185f, 680f, 0);
+         
+         Phrase typEau = new Phrase("des "+e.getTypeEau()+" : "+e.geteauCategorie(),new Font(Font.FontFamily.TIMES_ROMAN, 10,	Font.BOLD, BaseColor.BLACK));
+                     //METTRE UNE LIGNE
+         LineSeparator line = new LineSeparator(100 ,100f,BaseColor.BLACK, 1, 671f);        
+             //    Chunk ckline= new Chunk(line);
+                 typEau.add(line);
+          ColumnText.showTextAligned(cb, Element.ALIGN_LEFT, typEau, 185f, 670f, 0);
+            doc.add(img);
+                doc.add(image);
+               
+    }
+
+    private void new_Footer(Document doc,int page,PdfContentByte cb) {
+        //throw new UnsupportedOperationException("Not yet implemented");
+        
+        Phrase posp = new Phrase("Page "+page);
+                ColumnText.showTextAligned(cb, Element.ALIGN_LEFT, posp, 450f, 50f, 0);
+         
+    }
